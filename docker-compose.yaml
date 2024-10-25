@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  tracker-app:
+    container_name: tracker-app
+    image: tracker-app
+    depends_on:
+      - tracker-postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - tracker-network
+    env_file:
+      - .env
+
+  tracker-postgres:
+    image: postgres:16-alpine
+    container_name: tracker-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - tracker-postgres-db:/var/lib/postgresql/data
+    networks:
+      - tracker-network
+
+volumes:
+  tracker-postgres-db:
+
+networks:
+  tracker-network:
+    driver: bridge
